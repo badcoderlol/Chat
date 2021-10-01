@@ -3,12 +3,16 @@ import React, { useEffect, useState } from 'react'
 import { KeyboardAvoidingView, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native'
 import { auth } from '../firebase'
 
-const LoginScreen = () => {
+const Register = () => {
     const [email, setEmail] = useState('')
     const [password, setPassword] = useState('')
+    const [name, setName] = useState('')
+    const [ppURL, setPpURL] = useState('')
+
 
     const navigation = useNavigation()
 
+    /*
     useEffect(() => {
         const unsubscribe = auth.onAuthStateChanged(user => {
             if (user) {
@@ -18,18 +22,22 @@ const LoginScreen = () => {
 
         return unsubscribe
     }, [])
-
-    /*
+*/
     const handleSignUp = () => {
         auth
             .createUserWithEmailAndPassword(email, password)
             .then(userCredentials => {
                 const user = userCredentials.user;
+                updateProfile(auth.currentUser, {
+                    displayName: name,
+                    photoURL: ppURL ? ppURL : "https://i.stack.imgur.com/l60Hf.png"
+                })
                 console.log('Registered with:', user.email);
             })
             .catch(error => alert(error.message))
     }
-    */
+
+    /*
     const handleLogin = () => {
         auth
             .signInWithEmailAndPassword(email, password)
@@ -39,6 +47,7 @@ const LoginScreen = () => {
             })
             .catch(error => alert(error.message))
     }
+*/
 
     return (
         <KeyboardAvoidingView
@@ -53,6 +62,18 @@ const LoginScreen = () => {
                     style={styles.input}
                 />
                 <TextInput
+                    placeholder="Name"
+                    value={name}
+                    onChangeText={text => setName(text)}
+                    style={styles.input}
+                />
+                <TextInput
+                    placeholder="Profile URL"
+                    value={ppURL}
+                    onChangeText={text => setPpURL(text)}
+                    style={styles.input}
+                />
+                <TextInput
                     placeholder="Password"
                     value={password}
                     onChangeText={text => setPassword(text)}
@@ -62,19 +83,11 @@ const LoginScreen = () => {
             </View>
 
             <View style={styles.buttonContainer}>
-
                 <TouchableOpacity
-                    onPress={handleLogin}
-                    style={styles.button}
-                >
-                    <Text style={styles.buttonText}>Login</Text>
-                </TouchableOpacity>
-
-                <TouchableOpacity
-                    onPress={() => navigation.navigate('Register')}
+                    onPress={handleSignUp}
                     style={[styles.button, styles.buttonOutline]}
                 >
-                    <Text style={styles.buttonOutlineText}>New User</Text>
+                    <Text style={styles.buttonOutlineText}>Register</Text>
                 </TouchableOpacity>
 
             </View>
@@ -82,7 +95,7 @@ const LoginScreen = () => {
     )
 }
 
-export default LoginScreen
+export default Register
 
 const styles = StyleSheet.create({
     container: {
